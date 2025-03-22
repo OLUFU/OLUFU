@@ -1,0 +1,66 @@
+1.def calculate_discount(price, discount_percent):
+  """Calculates the final price after applying a discount.
+
+  Args:
+    price: The original price of the item.
+    discount_percent: The discount percentage (e.g., 20 for 20%).
+
+  Returns:
+    The final price after applying the discount, or the original price if the discount is less than 20%.
+  """
+  if discount_percent >= 20:
+    discount_amount = (discount_percent / 100) * price
+    final_price = price - discount_amount
+    return final_price
+  else:
+    return price
+
+# Example usage:
+price1 = 100
+discount1 = 25
+final_price1 = calculate_discount(price1, discount1)
+print(f"Price: {price1}, Discount: {discount1}%, Final Price: {final_price1}")
+
+price2 = 50
+discount2 = 10
+final_price2 = calculate_discount(price2, discount2)
+print(f"Price: {price2}, Discount: {discount2}%, Final Price: {final_price2}")
+
+price3 = 200
+discount3 = 20
+final_price3 = calculate_discount(price3, discount3)
+print(f"Price: {price3}, Discount: {discount3}%, Final Price: {final_price3}")
+
+
+2.def calculate_discount(price, discount_percentage):
+  """Calculates the final price after applying a discount.
+
+  Args:
+    price: The original price of the item.
+    discount_percentage: The discount percentage (e.g., 10 for 10%).
+
+  Returns:
+    The final price after the discount, or the original price if no discount is applied.
+  """
+  if discount_percentage > 0:
+    discount_amount = (discount_percentage / 100) * price
+    final_price = price - discount_amount
+    return final_price
+  else:
+    return price
+
+# Get user input
+try:
+  original_price = float(input("Enter the original price of the item: "))
+  discount = float(input("Enter the discount percentage (e.g., 10 for 10%): "))
+except ValueError:
+  print("Invalid input. Please enter numeric values for price and discount.")
+  exit()
+
+# Calculate and print the final price
+final_price = calculate_discount(original_price, discount)
+
+if final_price == original_price:
+  print(f"No discount applied. The price is: ${original_price:.2f}")
+else:
+  print(f"The final price after discount is: ${final_price:.2f}")
