@@ -1,0 +1,126 @@
+
+1.def modify_file(input_filename, output_filename, modification_function):
+    """
+    Reads an input file, applies a modification to each line,
+    and writes the modified lines to a new output file.
+
+    Args:
+        input_filename (str): The name of the input file to read.
+        output_filename (str): The name of the output file to write.
+        modification_function (function): A function that takes a string (a line
+            from the input file) as input and returns a modified string.
+    """
+
+    try:
+        with open(input_filename, 'r') as infile, open(output_filename, 'w') as outfile:
+            for line in infile:
+                modified_line = modification_function(line)
+                outfile.write(modified_line)
+
+        print(f"File '{input_filename}' processed and written to '{output_filename}' successfully.")
+
+    except FileNotFoundError:
+        print(f"Error: Input file '{input_filename}' not found.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+
+# Example Modification Functions:
+def uppercase_line(line):
+    """Converts a line to uppercase."""
+    return line.upper()
+
+def add_line_number(line, line_number):
+    """Adds a line number to the beginning of each line."""
+    return f"{line_number}: {line}"  # Preserve original line breaks and content
+
+def remove_whitespace(line):
+    """Removes leading and trailing whitespace from a line."""
+    return line.strip() + '\n' # Adds a newline character to ensure correct formatting
+
+def replace_word(line, old_word, new_word):
+    """Replaces all occurrences of a word in a line."""
+    return line.replace(old_word, new_word)
+
+def reverse_words(line):
+    """Reverses the order of words in a line."""
+    words = line.split()
+    reversed_words = words[::-1]
+    return " ".join(reversed_words) + '\n'
+
+
+if __name__ == "__main__":
+    # Example Usage:
+
+    input_file = "input.txt"  # Replace with your input file name
+    output_file = "output.txt"  # Replace with your desired output file name
+
+    # Create a sample input file (if it doesn't exist)
+    try:
+        with open(input_file, "x") as f: # x creates the file only if it does not already exist.
+            f.write("This is line 1.\n")
+            f.write("This is line 2. With some more text.\n")
+            f.write("This is the third line.\n")
+    except FileExistsError:
+        pass # The file already exists so we continue the program without an error.
+
+    # 1. Example 1: Convert to uppercase
+    modify_file(input_file, output_file, uppercase_line)
+
+    # 2. Example 2: Add line numbers
+    # Create a wrapper for the add_line_number function to pass the line number
+    def add_line_number_wrapper(line):
+        global line_count  # Use global for simplicity in this example
+        line_count += 1
+        return add_line_number(line, line_count)
+
+    line_count = 0  # Initialize line counter
+    modify_file(input_file, output_file, add_line_number_wrapper)
+
+    # 3. Example 3: Remove leading/trailing whitespace
+    modify_file(input_file, output_file, remove_whitespace)
+
+    # 4. Example 4: Replace a word
+    modify_file(input_file, output_file, lambda line: replace_word(line, "is", "WAS"))
+
+    # 5. Example 5: Reverse the words in each line
+    modify_file(input_file, output_file, reverse_words)
+
+
+    # You can change the modification_function argument in the modify_file call
+    # to use a different function or create your own.
+
+2.def get_file_content(filename):
+  """
+  Reads the content of a file and returns it as a string.
+  Handles potential errors like file not found or permission denied.
+
+  Args:
+    filename: The name of the file to read.
+
+  Returns:
+    The content of the file as a string, or None if an error occurred.
+  """
+
+  try:
+    with open(filename, 'r') as f:
+      content = f.read()
+      return content
+  except FileNotFoundError:
+    print(f"Error: File '{filename}' not found.")
+    return None
+  except PermissionError:
+    print(f"Error: Permission denied to read file '{filename}'.")
+    return None
+  except Exception as e:  # Catch other potential errors
+    print(f"An unexpected error occurred: {e}")
+    return None
+
+
+if __name__ == "__main__":
+  filename = input("Enter the filename: ")
+  file_content = get_file_content(filename)
+
+  if file_content is not None:
+    print("\nFile content:")
+    print(file_content)
