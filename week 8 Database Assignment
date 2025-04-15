@@ -1,0 +1,174 @@
+-- Database Management System: Library Management
+
+-- Create Database
+CREATE DATABASE IF NOT EXISTS library_management;
+
+-- Use Database
+USE library_management;
+
+-- ---------------------------------------------------------------------------------------------------
+--  TABLE: Authors
+--  Stores information about authors of books.
+-- ---------------------------------------------------------------------------------------------------
+1.
+CREATE TABLE Authors (
+    AuthorID INT PRIMARY KEY AUTO_INCREMENT,
+    FirstName VARCHAR(255) NOT NULL,
+    LastName VARCHAR(255) NOT NULL,
+    Biography TEXT,
+    DateOfBirth DATE
+);
+
+-- ---------------------------------------------------------------------------------------------------
+--  TABLE: Publishers
+--  Stores information about book publishers.
+-- ---------------------------------------------------------------------------------------------------
+
+CREATE TABLE Publishers (
+    PublisherID INT PRIMARY KEY AUTO_INCREMENT,
+    PublisherName VARCHAR(255) NOT NULL,
+    Address VARCHAR(255),
+    ContactNumber VARCHAR(20)
+);
+
+-- ---------------------------------------------------------------------------------------------------
+--  TABLE: Categories
+--  Stores categories of books (e.g., Fiction, Science, History).
+-- ---------------------------------------------------------------------------------------------------
+
+CREATE TABLE Categories (
+    CategoryID INT PRIMARY KEY AUTO_INCREMENT,
+    CategoryName VARCHAR(255) NOT NULL UNIQUE
+);
+
+-- ---------------------------------------------------------------------------------------------------
+--  TABLE: Books
+--  Stores information about books.
+-- ---------------------------------------------------------------------------------------------------
+
+CREATE TABLE Books (
+    BookID INT PRIMARY KEY AUTO_INCREMENT,
+    Title VARCHAR(255) NOT NULL,
+    AuthorID INT NOT NULL,
+    PublisherID INT NOT NULL,
+    CategoryID INT NOT NULL,
+    ISBN VARCHAR(20) UNIQUE NOT NULL,
+    PublicationYear INT,
+    PageCount INT,
+    Description TEXT,
+    FOREIGN KEY (AuthorID) REFERENCES Authors(AuthorID),
+    FOREIGN KEY (PublisherID) REFERENCES Publishers(PublisherID),
+    FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
+);
+
+-- ---------------------------------------------------------------------------------------------------
+--  TABLE: Members
+--  Stores information about library members.
+-- ---------------------------------------------------------------------------------------------------
+
+CREATE TABLE Members (
+    MemberID INT PRIMARY KEY AUTO_INCREMENT,
+    FirstName VARCHAR(255) NOT NULL,
+    LastName VARCHAR(255) NOT NULL,
+    Address VARCHAR(255),
+    PhoneNumber VARCHAR(20),
+    Email VARCHAR(255) UNIQUE,
+    DateOfBirth DATE,
+    JoinDate DATE NOT NULL
+);
+
+-- ---------------------------------------------------------------------------------------------------
+--  TABLE: Loans
+--  Tracks book loans to members.
+-- ---------------------------------------------------------------------------------------------------
+
+CREATE TABLE Loans (
+    LoanID INT PRIMARY KEY AUTO_INCREMENT,
+    BookID INT NOT NULL,
+    MemberID INT NOT NULL,
+    LoanDate DATE NOT NULL,
+    DueDate DATE NOT NULL,
+    ReturnDate DATE,  -- Can be NULL if the book is not returned yet
+    FOREIGN KEY (BookID) REFERENCES Books(BookID),
+    FOREIGN KEY (MemberID) REFERENCES Members(MemberID)
+);
+
+-- ---------------------------------------------------------------------------------------------------
+--  TABLE: Fines
+--  Stores information about fines incurred by members for late returns.
+-- ---------------------------------------------------------------------------------------------------
+
+CREATE TABLE Fines (
+    FineID INT PRIMARY KEY AUTO_INCREMENT,
+    LoanID INT NOT NULL,
+    FineAmount DECIMAL(10, 2) NOT NULL,
+    PaymentDate DATE, -- Can be NULL if the fine is not paid yet
+    FOREIGN KEY (LoanID) REFERENCES Loans(LoanID)
+);
+
+
+-- ---------------------------------------------------------------------------------------------------
+--  SAMPLE DATA INSERT STATEMENTS
+-- ---------------------------------------------------------------------------------------------------
+
+-- Authors
+INSERT INTO Authors (FirstName, LastName, Biography, DateOfBirth) VALUES
+('Jane', 'Austen', 'English novelist known primarily for her six major novels...', '1775-12-16'),
+('George', 'Orwell', 'English novelist, essayist, journalist and critic...', '1903-06-25'),
+('J.R.R.', 'Tolkien', 'English writer, poet, philologist, and academic...', '1892-01-03');
+
+-- Publishers
+INSERT INTO Publishers (PublisherName, Address, ContactNumber) VALUES
+('Penguin Classics', '80 Strand, London, WC2R 0RL', '02070009000'),
+('HarperCollins', '1 London Bridge Street, London, SE1 9GF', '02087417070'),
+('Allen & Unwin', '50 George Street, London, WC1B 4PY', '02076315000');
+
+-- Categories
+INSERT INTO Categories (CategoryName) VALUES
+('Fiction'),
+('Science Fiction'),
+('Fantasy'),
+('History');
+
+-- Books
+INSERT INTO Books (Title, AuthorID, PublisherID, CategoryID, ISBN, PublicationYear, PageCount, Description) VALUES
+('Pride and Prejudice', 1, 1, 1, '978-0141439518', 1813, 432, 'A novel about love, class, and society in 19th century England.'),
+('Nineteen Eighty-Four', 2, 1, 2, '978-0451524935', 1949, 328, 'A dystopian novel about totalitarianism and surveillance.'),
+('The Hobbit', 3, 2, 3, '978-0547928227', 1937, 320, 'A fantasy novel about a hobbit''s adventure.');
+
+-- Members
+INSERT INTO Members (FirstName, LastName, Address, PhoneNumber, Email, DateOfBirth, JoinDate) VALUES
+('Alice', 'Smith', '123 Main St, Anytown', '555-1234', 'alice.smith@example.com', '1990-05-15', '2023-01-10'),
+('Bob', 'Johnson', '456 Oak Ave, Anytown', '555-5678', 'bob.johnson@example.com', '1985-11-22', '2023-02-20');
+
+-- Loans
+INSERT INTO Loans (BookID, MemberID, LoanDate, DueDate) VALUES
+(1, 1, '2023-10-26', '2023-11-09'),
+(2, 2, '2023-10-26', '2023-11-09');
+
+-- Fines (Example - one overdue book)
+INSERT INTO Fines (LoanID, FineAmount) VALUES
+
+2.
+MySQL Database Setup (example schema)
+
+CREATE DATABASE IF NOT EXISTS task_manager;
+
+USE task_manager;
+
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL -- Store hashed passwords properly in a real app
+);
+
+CREATE TABLE IF NOT EXISTS tasks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    status ENUM('open', 'in_progress', 'completed') DEFAULT 'open',
+    user_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
